@@ -1,0 +1,59 @@
+{
+  "providerId": "Microsoft.Tools.ServiceModel.Svcutil",
+  "version": "8.0.0",
+  "options": {
+    "inputs": [
+      "https://api.yukiworks.be/ws/Domains.asmx?WSDL"
+    ],
+    "namespaceMappings": [
+      "*, YukiMcp.Yuki.Domains"
+    ],
+    "outputFile": "DomainsClient.cs",
+    "references": [
+      "Microsoft.Bcl.AsyncInterfaces, {Microsoft.Bcl.AsyncInterfaces, 5.0.0}",
+      "Microsoft.Extensions.AI.Abstractions, {Microsoft.Extensions.AI.Abstractions, 10.8.3}",
+      "Microsoft.Extensions.Caching.Abstractions, {Microsoft.Extensions.Caching.Abstractions, 10.0.10}",
+      "Microsoft.Extensions.Configuration, {Microsoft.Extensions.Configuration, 10.0.12}",
+      "Microsoft.Extensions.Configuration.Abstractions, {Microsoft.Extensions.Configuration.Abstractions, 10.0.12}",
+      "Microsoft.Extensions.Configuration.Binder, {Microsoft.Extensions.Configuration.Binder, 10.0.12}",
+      "Microsoft.Extensions.Configuration.CommandLine, {Microsoft.Extensions.Configuration.CommandLine, 10.0.12}",
+      "Microsoft.Extensions.Configuration.EnvironmentVariables, {Microsoft.Extensions.Configuration.EnvironmentVariables, 10.0.12}",
+      "Microsoft.Extensions.Configuration.FileExtensions, {Microsoft.Extensions.Configuration.FileExtensions, 10.0.12}",
+      "Microsoft.Extensions.Configuration.Json, {Microsoft.Extensions.Configuration.Json, 10.0.12}",
+      "Microsoft.Extensions.Configuration.UserSecrets, {Microsoft.Extensions.Configuration.UserSecrets, 10.0.12}",
+      "Microsoft.Extensions.DependencyInjection, {Microsoft.Extensions.DependencyInjection, 10.0.12}",
+      "Microsoft.Extensions.DependencyInjection.Abstractions, {Microsoft.Extensions.DependencyInjection.Abstractions, 10.0.12}",
+      "Microsoft.Extensions.Diagnostics, {Microsoft.Extensions.Diagnostics, 10.0.12}",
+      "Microsoft.Extensions.Diagnostics.Abstractions, {Microsoft.Extensions.Diagnostics.Abstractions, 10.0.12}",
+      "Microsoft.Extensions.FileProviders.Abstractions, {Microsoft.Extensions.FileProviders.Abstractions, 10.0.12}",
+      "Microsoft.Extensions.FileProviders.Physical, {Microsoft.Extensions.FileProviders.Physical, 10.0.12}",
+      "Microsoft.Extensions.FileSystemGlobbing, {Microsoft.Extensions.FileSystemGlobbing, 10.0.12}",
+      "Microsoft.Extensions.Hosting, {Microsoft.Extensions.Hosting, 10.0.12}",
+      "Microsoft.Extensions.Hosting.Abstractions, {Microsoft.Extensions.Hosting.Abstractions, 10.0.12}",
+      "Microsoft.Extensions.Http, {Microsoft.Extensions.Http, 10.0.12}",
+      "Microsoft.Extensions.Logging, {Microsoft.Extensions.Logging, 10.0.12}",
+      "Microsoft.Extensions.Logging.Abstractions, {Microsoft.Extensions.Logging.Abstractions, 10.0.12}",
+      "Microsoft.Extensions.Logging.Configuration, {Microsoft.Extensions.Logging.Configuration, 10.0.12}",
+      "Microsoft.Extensions.Logging.Console, {Microsoft.Extensions.Logging.Console, 10.0.12}",
+      "Microsoft.Extensions.Logging.Debug, {Microsoft.Extensions.Logging.Debug, 10.0.12}",
+      "Microsoft.Extensions.Logging.EventLog, {Microsoft.Extensions.Logging.EventLog, 10.0.12}",
+      "Microsoft.Extensions.Logging.EventSource, {Microsoft.Extensions.Logging.EventSource, 10.0.12}",
+      "Microsoft.Extensions.ObjectPool, {Microsoft.Extensions.ObjectPool, 5.0.10}",
+      "Microsoft.Extensions.Options, {Microsoft.Extensions.Options, 10.0.12}",
+      "Microsoft.Extensions.Options.ConfigurationExtensions, {Microsoft.Extensions.Options.ConfigurationExtensions, 10.0.12}",
+      "Microsoft.Extensions.Primitives, {Microsoft.Extensions.Primitives, 10.0.12}",
+      "Microsoft.IdentityModel.Logging, {Microsoft.IdentityModel.Logging, 6.8.0}",
+      "Microsoft.IdentityModel.Protocols.WsTrust, {Microsoft.IdentityModel.Protocols.WsTrust, 6.8.0}",
+      "Microsoft.IdentityModel.Tokens, {Microsoft.IdentityModel.Tokens, 6.8.0}",
+      "Microsoft.IdentityModel.Tokens.Saml, {Microsoft.IdentityModel.Tokens.Saml, 6.8.0}",
+      "Microsoft.IdentityModel.Xml, {Microsoft.IdentityModel.Xml, 6.8.0}",
+      "ModelContextProtocol, {ModelContextProtocol, 2.2.0}",
+      "ModelContextProtocol.Core, {ModelContextProtocol.Core, 2.2.0}",
+      "System.Diagnostics.EventLog, {System.Diagnostics.EventLog, 10.0.12}",
+      "System.Security.Cryptography.Pkcs, {System.Security.Cryptography.Pkcs, 6.0.1}",
+      "System.Security.Cryptography.Xml, {System.Security.Cryptography.Xml, 6.0.1}"
+    ],
+    "targetFramework": "net10.0",
+    "typeReuseMode": "All"
+  }
+}

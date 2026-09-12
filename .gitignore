@@ -1,0 +1,18 @@
+# Build output
+bin/
+obj/
+dist/
+*.pdb
+
+# Rider / VS
+.vs/
+.idea/
+*.user
+*.suo
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
