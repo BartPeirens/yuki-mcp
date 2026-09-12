@@ -18,28 +18,37 @@ de machine waar hij draait.
 
 ## Installatie
 
-1. Pak de zip uit op een vaste locatie, bv. `C:\Tools\YukiMcp\YukiMcp.exe`.
-2. Open (of maak) het Claude Desktop configuratiebestand `claude_desktop_config.json`:
+1. Pak de zip uit op een vaste locatie, bv. `C:\Tools\YukiMcp\`. Naast `YukiMcp.exe` zit een
+   `.env`-bestand.
+2. Open dat `.env`-bestand en vul je echte API-key in:
+
+   ```
+   APIKEY=JOUW_YUKI_API_KEY
+   ```
+
+3. Open (of maak) het Claude Desktop configuratiebestand `claude_desktop_config.json`:
    - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
    - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-3. Voeg een entry toe onder `mcpServers` (pas het pad en de API-key aan):
+4. Voeg een entry toe onder `mcpServers` (enkel het pad naar de exe, geen API-key nodig):
 
    ```json
    {
      "mcpServers": {
        "yuki": {
-         "command": "C:\\Tools\\YukiMcp\\YukiMcp.exe",
-         "args": ["--api-key", "JOUW_YUKI_API_KEY"]
+         "command": "C:\\Tools\\YukiMcp\\YukiMcp.exe"
        }
      }
    }
    ```
 
-4. Herstart Claude Desktop. De Yuki-tools verschijnen dan in het "hamer"-icoon (MCP tools) van een
+5. Herstart Claude Desktop. De Yuki-tools verschijnen dan in het "hamer"-icoon (MCP tools) van een
    nieuwe chat.
 
-De API-key wordt **enkel als opstartargument** meegegeven — er zit geen `.env`-bestand of
-losstaande configuratie bij, en de key komt nooit in een tool-aanroep terecht.
+De server leest de API-key uit het `.env`-bestand in dezelfde map als de exe (`APIKEY=...`) — zo
+hoef je hem nooit in `claude_desktop_config.json` te zetten. Wie dat liever heeft, kan de key nog
+steeds als opstartargument meegeven (`"args": ["--api-key", "JOUW_YUKI_API_KEY"]`) of via de
+`YUKI_API_KEY`-omgevingsvariabele; die twee hebben voorrang op `.env`. De key komt nooit in een
+tool-aanroep terecht.
 
 ## Wat kan de server?
 
@@ -67,12 +76,50 @@ dotnet run --project src/YukiMcp -- --api-key <key>   # lokaal draaien
 
 # Publiceren als één zelfstandige exe (standaard win-x64):
 ./scripts/publish.ps1
-# -> dist/win-x64/YukiMcp.exe
+# -> build/YukiMcp.exe
 
-# Publiceren + inpakken in een deelbare zip (met deze README en de LICENSE erbij):
-./scripts/package-zip.ps1 -Version 0.1.0
-# -> dist/YukiMcp-0.1.0-win-x64.zip
+# Publiceren + inpakken in een deelbare zip (met deze README, de LICENSE, CHANGELOG.md en een
+# .env-template met een placeholder-key erbij). Versienummer (v1, v2, ...) wordt automatisch
+# +1 t.o.v. het VERSION-bestand - voeg eerst een "## vN - <datum>"-sectie toe aan CHANGELOG.md,
+# anders weigert het script te bouwen:
+./scripts/package-zip.ps1
+# -> dist/YukiMcp-vN-win-x64.zip
 ```
+
+Zie [CHANGELOG.md](CHANGELOG.md) voor wat er in elke release zit.
+
+## Testen met MCP Inspector
+
+[MCP Inspector](https://github.com/modelcontextprotocol/inspector) is Anthropics browser-tool om
+een MCP-server rechtstreeks te testen (tools/resources oplijsten, een tool aanroepen, de ruwe
+request/response bekijken) zonder Claude Desktop erbij nodig te hebben — handig tijdens
+ontwikkeling of om een build te controleren voor je hem aan Claude Desktop koppelt. Vereist
+[Node.js](https://nodejs.org/).
+
+1. Zorg dat er ergens een `YukiMcp.exe` staat met een `.env`-bestand (met een geldige `APIKEY`, zie
+   "Installatie" hierboven) in **dezelfde map** — bv. na `./scripts/publish.ps1` in `build/`, of na
+   `dotnet build` in `src/YukiMcp/bin/Debug/net10.0/win-x64/`.
+2. Start Inspector met dat pad als command:
+
+   ```powershell
+   npx @modelcontextprotocol/inspector C:\Tools\YukiMcp\YukiMcp.exe
+   ```
+
+   Dit opent Inspector in de browser (het exacte adres, standaard iets als
+   `http://localhost:6274`, staat in de terminal-output) met **Transport Type: STDIO** en
+   **Command** al ingevuld.
+3. Voeg je de server liever manueel toe in de Inspector-UI (of in een andere MCP-client met
+   dezelfde STDIO/Command/Arguments-velden)? Vul dan:
+   - **Command**: het volledige, absolute pad naar een `YukiMcp.exe` die ook echt bestaat op die
+     locatie. Een foutmelding als `'...\YukiMcp.exe' is not recognized as an internal or external
+     command` betekent meestal dat het pad niet naar een bestaand bestand wijst (bv. omdat de exe
+     nog in `build/` of `bin/...` staat in plaats van in de map die je hebt ingevuld).
+   - **Arguments**: leeg laten — de key komt uit het `.env`-bestand naast de exe. (Wil je expliciet
+     met een opstartargument testen, vul dan `--api-key JOUW_KEY` in.)
+   - **Environment Variables** (indien de UI dat veld heeft): optioneel, als alternatief voor
+     `.env`, `YUKI_API_KEY` = je key.
+4. Klik **Connect**, open het "Tools"-tabblad — daar staan de ~96 `yuki_*`-tools — kies er één, vul
+   de parameters in en klik **Run Tool** om de respons te bekijken.
 
 ## Status
 
