@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="nl-BE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Resultaat per maand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   VASTE TEMPLATE: niet aanpassen bij wekelijkse update.
+   Alleen het blok tussen DATA:START en DATA:END wordt vervangen.
+   ============================================================ */
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #EEF1F0;
+  --surface: #FFFFFF;
+  --ink: #1C2830;
+  --ink-soft: #5B6A72;
+  --rule: #D5DCDA;
+  --sales: #1E7A4C;
+  --sales-vat: #A9DDBF;
+  --cost: #B3261E;
+  --cost-vat: #F3B9B4;
+  --net: #1C2830;
+  --bank: #6B3FA0;
+  --neg: #B3261E;
+  --font: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151C20; --surface: #1D262B; --ink: #E6ECEA; --ink-soft: #95A4A9; --rule: #2F3B41;
+    --sales: #4CC38A; --sales-vat: #22533A; --cost: #F2736B; --cost-vat: #5E2A27; --net: #E6ECEA; --bank: #B793F2; --neg: #F2736B;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151C20; --surface: #1D262B; --ink: #E6ECEA; --ink-soft: #95A4A9; --rule: #2F3B41;
+  --sales: #4CC38A; --sales-vat: #22533A; --cost: #F2736B; --cost-vat: #5E2A27; --net: #E6ECEA; --bank: #B793F2; --neg: #F2736B;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: 16px; line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+main { max-width: 1120px; margin: 0 auto; padding: 2.5rem 1.25rem 3rem; }
+
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1rem 2rem; margin-bottom: 1.75rem; }
+.org { font-weight: 600; color: var(--ink-soft); margin: 0 0 .25rem; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.75rem); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+.period { color: var(--ink-soft); margin: .5rem 0 0; }
+
+.years { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.year { background: var(--surface); border-radius: 14px; padding: 1rem 1.1rem; }
+.year h2 { font-size: 1rem; color: var(--ink-soft); font-weight: 600; margin: 0; }
+.year .big { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin: .2rem 0 .1rem; }
+.year .lbl { font-size: .8rem; color: var(--ink-soft); }
+.year dl { display: grid; grid-template-columns: 1fr auto; gap: .2rem .75rem; margin: .7rem 0 0; font-size: .875rem; }
+.year dt { color: var(--ink-soft); }
+.year dd { margin: 0; text-align: right; font-weight: 500; }
+.year dd.bank { color: var(--bank); }
+@media (max-width: 720px) { .years { grid-template-columns: 1fr; } }
+.totals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); margin-bottom: 2rem; }
+.totals div { padding: .9rem 1rem .9rem 0; }
+.totals div + div { padding-left: 1rem; border-left: 1px solid var(--rule); }
+.totals dt { font-size: .875rem; color: var(--ink-soft); }
+.totals dd { margin: .15rem 0 0; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; }
+.totals .is-net dd { font-size: 1.4rem; }
+
+.chart-card { background: var(--surface); border-radius: 14px; padding: 1.25rem 1.25rem .75rem; margin-bottom: 2rem; }
+.chart-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem 1.5rem; align-items: baseline; margin-bottom: .5rem; }
+h2 { font-size: 1.15rem; font-weight: 600; margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; list-style: none; margin: 0; padding: 0; font-size: .875rem; color: var(--ink-soft); }
+.legend li { display: flex; align-items: center; gap: .4rem; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.sw-line { width: 18px; height: 0; border-top: 2px solid var(--net); position: relative; border-radius: 0; }
+.sw-line::after { content: ""; position: absolute; left: 5px; top: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--net); }
+.sw-bank { width: 20px; height: 0; border-radius: 0; border-top: 2px dashed var(--bank); }
+.chart-wrap { position: relative; }
+#chart { display: block; width: 100%; height: auto; }
+#chart text { font-family: var(--font); fill: var(--ink-soft); font-size: 12px; }
+#chart .axis-zero { stroke: var(--ink); stroke-width: 1.25; }
+#chart .grid { stroke: var(--rule); stroke-width: 1; }
+#chart .band { fill: transparent; cursor: pointer; outline: none; }
+#chart .band:hover, #chart .band:focus-visible { fill: var(--ink); fill-opacity: .05; }
+#chart .band:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
+.axis-label { font-size: .8rem; color: var(--ink-soft); display: flex; justify-content: space-between; margin-top: .25rem; }
+
+.tip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--bg);
+  border-radius: 8px; padding: .6rem .75rem; font-size: .85rem; line-height: 1.4; min-width: 220px;
+  opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s;
+}
+.tip.on { opacity: 1; transform: none; }
+.tip strong { display: block; margin-bottom: .25rem; }
+.tip table { border-collapse: collapse; width: 100%; }
+.tip td { padding: 1px 0; }
+.tip td:last-child { text-align: right; padding-left: 1rem; }
+.tip tr.sum td { border-top: 1px solid currentColor; padding-top: 3px; font-weight: 600; }
+
+.table-card { background: var(--surface); border-radius: 14px; padding: 1.25rem; }
+.table-scroll { overflow-x: auto; margin-top: .75rem; }
+table.data { border-collapse: collapse; width: 100%; min-width: 680px; font-size: .925rem; }
+table.data th, table.data td { padding: .55rem .6rem; text-align: right; white-space: nowrap; }
+table.data th:first-child, table.data td:first-child { text-align: left; }
+table.data thead th { font-weight: 600; color: var(--ink-soft); border-bottom: 2px solid var(--ink); vertical-align: bottom; }
+table.data tbody td { border-bottom: 1px solid var(--rule); }
+table.data tbody tr:hover td { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+table.data td.vat { color: var(--ink-soft); }
+.sort-btn { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: .3rem; }
+.sort-btn:hover { color: var(--ink); }
+.sort-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 3px; }
+.sort-btn .arrow { width: .8em; display: inline-block; text-align: center; }
+th[aria-sort="ascending"] .sort-btn, th[aria-sort="descending"] .sort-btn { color: var(--ink); }
+.range { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin: .25rem 0 .75rem; font-size: .9rem; }
+.range label { color: var(--ink-soft); display: inline-flex; align-items: center; gap: .4rem; }
+.range select, .btn {
+  font: inherit; font-size: .9rem; color: var(--ink); background: var(--bg); border: 1px solid var(--rule);
+  border-radius: 8px; padding: .35rem .6rem; min-height: 36px;
+}
+.range select:focus-visible, .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.btn { cursor: pointer; }
+.btn:hover:not(:disabled) { border-color: var(--ink-soft); }
+.btn:disabled { opacity: .45; cursor: default; }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 1rem; margin-top: .9rem; font-size: .9rem; color: var(--ink-soft); }
+.pager .btns { display: flex; gap: .5rem; }
+.sub { font-size: .875rem; color: var(--ink-soft); margin: .15rem 0 0; }
+table.data td.net { font-weight: 600; }
+table.data td.bank { color: var(--bank); }
+table.data .neg { color: var(--neg); }
+table.data tfoot td { font-weight: 700; border-top: 2px solid var(--ink); }
+.running { font-size: .78rem; color: var(--ink-soft); font-weight: 400; margin-left: .35rem; }
+
+.row-tip { position: fixed; z-index: 10; pointer-events: none; min-width: 300px; max-width: calc(100vw - 24px); }
+table.data tbody tr { cursor: default; }
+table.data tbody tr:focus-visible td { outline: none; background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.tip td.minus { color: inherit; opacity: .85; }
+.tip .hint { display: block; margin-top: .35rem; opacity: .75; font-size: .78rem; }
+footer { margin-top: 2rem; color: var(--ink-soft); font-size: .85rem; max-width: 72ch; }
+footer p { margin: 0 0 .5rem; }
+
+@media (max-width: 720px) {
+  main { padding-top: 1.5rem; }
+  .totals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .totals div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .totals div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .chart-card, .table-card { padding: 1rem .75rem; border-radius: 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <p class="org" id="org"></p>
+      <h1>Resultaat per maand</h1>
+      <p class="period" id="period"></p>
+    </div>
+  </header>
+
+  <section class="years" id="years" aria-label="Netto over per jaar"></section>
+
+  <section class="chart-card" aria-labelledby="chart-title">
+    <div class="chart-head">
+      <div>
+        <h2 id="chart-title">Gefactureerd en uitgegeven</h2>
+        <p class="sub" id="chart-range"></p>
+      </div>
+      <ul class="legend">
+        <li><span class="sw" style="background:var(--sales)"></span>Verkoop excl. btw</li>
+        <li><span class="sw" style="background:var(--sales-vat)"></span>Btw verkoop</li>
+        <li><span class="sw" style="background:var(--cost)"></span>Uitgaven excl. btw</li>
+        <li><span class="sw" style="background:var(--cost-vat)"></span>Btw uitgaven</li>
+        <li><span class="sw sw-line"></span>Netto over</li>
+        <li><span class="sw sw-bank"></span>Banksaldo einde maand (rechteras)</li>
+      </ul>
+    </div>
+    <div class="range" role="group" aria-label="Periode van de grafiek">
+      <label>Van <select id="range-from"></select></label>
+      <label>tot en met <select id="range-to"></select></label>
+      <button type="button" class="btn" id="range-reset">Laatste 12 maanden</button>
+    </div>
+    <div class="chart-wrap" id="chart-wrap">
+      <svg id="chart" role="img" aria-label="Staafgrafiek per maand met verkoop en uitgaven naast elkaar, btw gestapeld bovenop, het netto resultaat als lijn en het banksaldo als paarse stippellijn op de rechteras."></svg>
+      <div class="tip" id="tip" role="status" aria-live="polite"></div>
+    </div>
+    <div class="axis-label"><span>Per maand links wat je factureert, rechts wat je uitgeeft. De lichte tint is btw.</span></div>
+  </section>
+
+  <section class="table-card" aria-labelledby="table-title">
+    <h2 id="table-title">Cijfers per maand</h2>
+    <div class="table-scroll">
+      <table class="data" id="table">
+        <thead>
+          <tr>
+            <th scope="col" data-sort="maand"><button type="button" class="sort-btn">Maand<span class="arrow" aria-hidden="true"></span></button></th>
+            <th scope="col">Verkoop excl. btw</th>
+            <th scope="col">Uitgaven excl. btw</th>
+            <th scope="col">Btw verkoop</th>
+            <th scope="col">Btw uitgaven</th>
+            <th scope="col" data-sort="net"><button type="button" class="sort-btn">Netto over<span class="arrow" aria-hidden="true"></span></button></th>
+            <th scope="col" data-sort="bank"><button type="button" class="sort-btn">Banksaldo einde maand<span class="arrow" aria-hidden="true"></span></button></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+    <div class="pager">
+      <span id="page-info" aria-live="polite"></span>
+      <div class="btns">
+        <button type="button" class="btn" id="page-prev">Vorige</button>
+        <button type="button" class="btn" id="page-next">Volgende</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Bron: Yuki, verkoop- en aankoopfacturen geboekt op de klanten- en leveranciersrekening, met de btw van die facturen. Een factuur telt in de maand van de factuurdatum. Een creditnota en de vervangende factuur tellen in de maand van de factuur die ze corrigeren.</p>
+    <p>Banksaldo is het saldo van de bankrekeningen in Yuki op de laatste dag van de maand; voor de lopende maand het saldo tot nu.</p>
+    <p>Uitgaven zijn alle uitgaven van de maand excl. btw: aankoopfacturen, loon en dividend, belastingen en voorheffingen, sociale bijdragen en verzekeringen, tax shelter en overige betalingen zonder factuur (uit de bankrekening). Netto over is verkoop excl. btw min alle uitgaven. Ga met de muis over een maand om de berekening te zien.</p>
+    <p id="stamp"></p>
+  </footer>
+</main>
+<div class="tip row-tip" id="row-tip" role="tooltip"></div>
+
+<!-- ============================================================
+     DATA:START  (alleen dit blok wordt wekelijks vervangen)
+     "administratie" = de naam van de administratie zoals Yuki die teruggeeft
+     (yuki_general_companies), nooit handmatig ingevuld.
+     Schema: maanden[] = { maand: "JJJJ-MM", verkoop_excl, verkoop_btw,
+     aankoopfacturen_excl, uitgaven_btw, loon_dividend, belastingen,
+     sociaal_verzekering, tax_shelter, overige_betalingen, banksaldo }  (bedragen in EUR, 2 decimalen)
+     ============================================================ -->
+<script type="application/json" id="dashboard-data">
+{
+  "administratie": "",
+  "bijgewerkt_op": "2000-01-01",
+  "maanden": []
+}
+</script>
+<!-- DATA:END -->
+
+<script>
+(function () {
+  "use strict";
+  var data;
+  try { data = JSON.parse(document.getElementById("dashboard-data").textContent); }
+  catch (e) { document.getElementById("period").textContent = "De cijfers konden niet worden gelezen. Controleer het datablok."; return; }
+
+  var rows = data.maanden.map(function (m) {
+    return {
+      maand: m.maand,
+      se: +m.verkoop_excl || 0, sv: +m.verkoop_btw || 0,
+      parts: [
+        ["Aankoopfacturen excl. btw", +m.aankoopfacturen_excl || 0],
+        ["Loon en dividend zaakvoerder", +m.loon_dividend || 0],
+        ["Belastingen en voorheffingen", +m.belastingen || 0],
+        ["Sociale bijdragen en verzekeringen", +m.sociaal_verzekering || 0],
+        ["Tax shelter", +m.tax_shelter || 0],
+        ["Overige betalingen zonder factuur", +m.overige_betalingen || 0]
+      ],
+      uv: +m.uitgaven_btw || 0,
+      bank: (m.banksaldo === null || m.banksaldo === undefined) ? null : +m.banksaldo
+    };
+  });
+
+  rows.forEach(function (r) {
+    r.ue = Math.round(r.parts.reduce(function (a, p) { return a + p[1]; }, 0) * 100) / 100;
+    r.net = Math.round((r.se - r.ue) * 100) / 100;
+  });
+  var eur = new Intl.NumberFormat("nl-BE", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var eur0 = new Intl.NumberFormat("nl-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  var monShort = new Intl.DateTimeFormat("nl-BE", { month: "short" });
+  var monLong = new Intl.DateTimeFormat("nl-BE", { month: "long", year: "numeric" });
+  var dayLong = new Intl.DateTimeFormat("nl-BE", { day: "numeric", month: "long", year: "numeric" });
+  function toDate(ym) { var p = ym.split("-"); return new Date(+p[0], +p[1] - 1, 1); }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function shortLabel(ym) { var d = toDate(ym); return monShort.format(d).replace(".", "") + " " + String(d.getFullYear()).slice(2); }
+
+  var updated = new Date(data.bijgewerkt_op + "T00:00:00");
+  var currentYM = data.bijgewerkt_op.slice(0, 7);
+  document.getElementById("org").textContent = data.administratie || "";
+  document.title = (data.administratie ? data.administratie + ": " : "") + "resultaat per maand";
+  document.getElementById("period").textContent =
+    cap(monLong.format(toDate(rows[0].maand))) + " tot en met " + monLong.format(toDate(rows[rows.length - 1].maand)) +
+    ", bijgewerkt op " + dayLong.format(updated) + ".";
+  document.getElementById("stamp").textContent = "Laatst bijgewerkt op " + dayLong.format(updated) + ".";
+
+  // Totalen
+  var tot = rows.reduce(function (a, r) { a.se += r.se; a.sv += r.sv; a.ue += r.ue; a.uv += r.uv; a.net += r.net; return a; }, { se: 0, sv: 0, ue: 0, uv: 0, net: 0 });
+  // Per jaar: laatste 3 kalenderjaren in de data
+  var years = {};
+  rows.forEach(function (r) {
+    var y = r.maand.slice(0, 4);
+    var o = years[y] || (years[y] = { se: 0, ue: 0, net: 0, bank: null, last: r.maand });
+    o.se += r.se; o.ue += r.ue; o.net += r.net;
+    if (r.maand >= o.last) { o.last = r.maand; o.bank = r.bank; }
+  });
+  var yearKeys = Object.keys(years).sort().slice(-3);
+  document.getElementById("years").innerHTML = yearKeys.map(function (y) {
+    var o = years[y], partial = o.last.slice(5) !== "12";
+    var title = partial ? y + " t/m " + monLong.format(toDate(o.last)).replace(/\s*\d{4}$/, "") : y;
+    return '<article class="year"><h2>' + title + '</h2>' +
+      '<div class="big"' + (o.net < 0 ? ' style="color:var(--neg)"' : '') + '>' + eur0.format(o.net) + '</div>' +
+      '<div class="lbl">netto over</div><dl>' +
+      '<dt>Verkoop excl. btw</dt><dd>' + eur0.format(o.se) + '</dd>' +
+      '<dt>Uitgaven excl. btw</dt><dd>' + eur0.format(o.ue) + '</dd>' +
+      '<dt>Banksaldo ' + (o.last === currentYM ? 'nu' : 'einde jaar') + '</dt><dd class="bank">' + (o.bank === null ? '' : eur0.format(o.bank)) + '</dd>' +
+      '</dl></article>';
+  }).join("");
+
+  // Tabel (alle maanden, sorteerbaar op maand en netto over)
+  var tb = document.querySelector("#table tbody");
+  var sortState = { key: "maand", dir: "desc" };
+  var PAGE_SIZE = 12, page = 0;
+  function rowHtml(r) {
+    var running = r.maand === currentYM ? '<span class="running">lopend</span>' : "";
+    return '<tr tabindex="0" data-m="' + r.maand + '"><td>' + cap(monLong.format(toDate(r.maand))) + running + "</td>" +
+      "<td" + (r.se < 0 ? ' class="neg"' : "") + ">" + eur.format(r.se) + "</td>" +
+      "<td>" + eur.format(r.ue) + "</td>" +
+      '<td class="vat">' + eur.format(r.sv) + "</td>" +
+      '<td class="vat">' + eur.format(r.uv) + "</td>" +
+      '<td class="net' + (r.net < 0 ? " neg" : "") + '">' + eur.format(r.net) + "</td>" +
+      '<td class="bank">' + (r.bank === null ? "" : eur.format(r.bank)) + "</td></tr>";
+  }
+  function renderTable() {
+    var k = sortState.key, f = sortState.dir === "asc" ? 1 : -1;
+    var sorted = rows.slice().sort(function (a, b) {
+      var c = k === "maand" ? a.maand.localeCompare(b.maand) : (a[k] === null ? -Infinity : a[k]) - (b[k] === null ? -Infinity : b[k]);
+      return c !== 0 ? c * f : a.maand.localeCompare(b.maand);
+    });
+    var pages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+    if (page > pages - 1) page = pages - 1;
+    tb.innerHTML = sorted.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE).map(rowHtml).join("");
+    document.getElementById("page-info").textContent = "Pagina " + (page + 1) + " van " + pages + ", " + sorted.length + " maanden";
+    document.getElementById("page-prev").disabled = page === 0;
+    document.getElementById("page-next").disabled = page >= pages - 1;
+    document.querySelectorAll("#table th[data-sort]").forEach(function (th) {
+      var on = th.getAttribute("data-sort") === k;
+      th.setAttribute("aria-sort", on ? (sortState.dir === "asc" ? "ascending" : "descending") : "none");
+      th.querySelector(".arrow").textContent = on ? (sortState.dir === "asc" ? "▲" : "▼") : "";
+    });
+  }
+  document.querySelectorAll("#table th[data-sort] .sort-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var k = btn.parentNode.getAttribute("data-sort");
+      if (sortState.key === k) sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+      else sortState = { key: k, dir: "desc" };
+      page = 0;
+      renderTable();
+    });
+  });
+  document.getElementById("page-prev").addEventListener("click", function () { if (page > 0) { page--; renderTable(); } });
+  document.getElementById("page-next").addEventListener("click", function () { page++; renderTable(); });
+  renderTable();
+  document.querySelector("#table tfoot").innerHTML =
+    "<tr><td>Totaal</td><td>" + eur.format(tot.se) + "</td><td>" + eur.format(tot.ue) + "</td><td>" +
+    eur.format(tot.sv) + "</td><td>" + eur.format(tot.uv) + '</td><td class="' + (tot.net < 0 ? "neg" : "") + '">' + eur.format(tot.net) + "</td><td></td></tr>";
+
+  // Grafiek
+  var svg = document.getElementById("chart");
+  var wrap = document.getElementById("chart-wrap");
+  var tip = document.getElementById("tip");
+  var NS = "http://www.w3.org/2000/svg";
+  function el(name, attrs, parent) {
+    var n = document.createElementNS(NS, name);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function niceStep(range) {
+    var raw = range / 6, pow = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / pow;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * pow;
+  }
+
+  // Grafiekvenster: max 12 maanden, laatste = huidige maand - 1
+  var lastFull = (function () { var d = toDate(currentYM); d.setMonth(d.getMonth() - 1);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); })();
+  var defaultRows = rows.filter(function (r) { return r.maand <= lastFull; }).slice(-12);
+  var allMonths = rows.map(function (r) { return r.maand; });
+  var selFrom = document.getElementById("range-from"), selTo = document.getElementById("range-to");
+  var opts = allMonths.map(function (ym) { return '<option value="' + ym + '">' + cap(monLong.format(toDate(ym))) + "</option>"; }).join("");
+  selFrom.innerHTML = opts; selTo.innerHTML = opts;
+  var chartRows = defaultRows;
+  function setRange(from, to) {
+    if (from > to) { var t = from; from = to; to = t; }
+    selFrom.value = from; selTo.value = to;
+    chartRows = rows.filter(function (r) { return r.maand >= from && r.maand <= to; });
+    document.getElementById("chart-range").textContent =
+      cap(monLong.format(toDate(from))) + " tot en met " + monLong.format(toDate(to)) + " (" + chartRows.length + (chartRows.length === 1 ? " maand)" : " maanden)");
+    hideTip();
+    draw();
+  }
+  function resetRange() {
+    var d = defaultRows.length ? defaultRows : rows.slice(-12);
+    setRange(d[0].maand, d[d.length - 1].maand);
+  }
+  selFrom.addEventListener("change", function () { setRange(selFrom.value, selTo.value); });
+  selTo.addEventListener("change", function () { setRange(selFrom.value, selTo.value); });
+  document.getElementById("range-reset").addEventListener("click", resetRange);
+
+  function draw() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var rs = chartRows;
+    if (!rs.length) return;
+    var W = Math.max(320, wrap.clientWidth), small = W < 560;
+    var H = small ? 300 : 380;
+    var m = { t: 12, r: small ? 44 : 56, b: 30, l: small ? 44 : 56 };
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    // Banksaldo op eigen rechteras (zelfde aantal rasterlijnen)
+    var bankVals = rs.map(function (r) { return r.bank; }).filter(function (v) { return v !== null; });
+    // Alles in positieve zin: verkoop en uitgaven als twee staven naast elkaar.
+    // Alleen een negatieve maand (bv. creditnota groter dan facturatie) zakt onder nul.
+    var vals = [0];
+    rs.forEach(function (r) {
+      vals.push(r.se + r.sv, r.se, r.ue + r.uv, r.net);
+    });
+    var maxV = Math.max.apply(null, vals), minV = Math.min.apply(null, vals);
+    var step = niceStep(maxV - minV || 1);
+    var yMax = Math.ceil(maxV / step) * step, yMin = Math.floor(minV / step) * step;
+    var iw = W - m.l - m.r, ih = H - m.t - m.b;
+    function y(v) { return m.t + (yMax - v) / (yMax - yMin) * ih; }
+    var bw = iw / rs.length, gap = 2;
+    var barW = Math.max(5, Math.min(24, bw * 0.34));
+    function cx(i) { return m.l + bw * i + bw / 2; }
+
+    var nTicks = Math.round((yMax - yMin) / step);
+    var bMin = 0, bStep = 1;
+    if (bankVals.length) {
+      var bLo = Math.min(0, Math.min.apply(null, bankVals)), bHi = Math.max.apply(null, bankVals);
+      // rechteras: zelfde verhouding nul-lijn als linkeras, zodat rasterlijnen samenvallen
+      var zeroIdx = Math.round(-yMin / step);
+      var upTicks = nTicks - zeroIdx, downTicks = zeroIdx;
+      var raw = Math.max(bHi / Math.max(upTicks, 1), downTicks ? -bLo / downTicks : 0);
+      var pow = Math.pow(10, Math.floor(Math.log10(raw || 1))), f = raw / pow;
+      bStep = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * pow;
+      bMin = -downTicks * bStep;
+    }
+    function yb(v) { return y(yMin + (v - bMin) / bStep * step); }
+    for (var gi = 0; gi <= nTicks; gi++) {
+      var g = yMin + gi * step;
+      el("line", { x1: m.l, x2: W - m.r, y1: y(g), y2: y(g), "class": Math.abs(g) < 1e-6 ? "axis-zero" : "grid" }, svg);
+      var t = el("text", { x: m.l - 8, y: y(g) + 4, "text-anchor": "end" }, svg);
+      t.textContent = (g / 1000).toLocaleString("nl-BE") + "k";
+      if (bankVals.length && (bMin + gi * bStep >= 0 || Math.min.apply(null, bankVals) < 0)) {
+        var tb2 = el("text", { x: W - m.r + 8, y: y(g) + 4, "text-anchor": "start", style: "fill:var(--bank)" }, svg);
+        tb2.textContent = ((bMin + gi * bStep) / 1000).toLocaleString("nl-BE") + "k";
+      }
+    }
+    el("line", { x1: m.l, x2: W - m.r, y1: y(0), y2: y(0), "class": "axis-zero" }, svg);
+
+    function stackBar(x, base, top, cBase, cTop) {
+      // basis (excl. btw) vanaf 0, btw erbovenop in dezelfde richting
+      function seg(v0, v1, c) {
+        if (v0 === v1) return;
+        var a = y(Math.max(v0, v1)), b = y(Math.min(v0, v1));
+        el("rect", { x: x, y: a, width: barW, height: Math.max(0, b - a), fill: c }, svg);
+      }
+      seg(0, base, cBase);
+      seg(base, base + top, cTop);
+    }
+    rs.forEach(function (r, i) {
+      var left = cx(i) - barW - gap / 2, right = cx(i) + gap / 2;
+      stackBar(left, r.se, r.sv, "var(--sales)", "var(--sales-vat)");
+      stackBar(right, r.ue, r.uv, "var(--cost)", "var(--cost-vat)");
+      var every = small ? 2 : 1;
+      if (i % every === 0 || i === rs.length - 1) {
+        var lt = el("text", { x: cx(i), y: H - 10, "text-anchor": "middle" }, svg);
+        lt.textContent = shortLabel(r.maand);
+      }
+    });
+
+    // Netto-lijn
+    var d = rs.map(function (r, i) { return (i ? "L" : "M") + cx(i) + " " + y(r.net); }).join(" ");
+    el("path", { d: d, fill: "none", stroke: "var(--net)", "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+    rs.forEach(function (r, i) {
+      el("circle", { cx: cx(i), cy: y(r.net), r: small ? 3.5 : 4.5,
+        fill: r.net < 0 ? "var(--surface)" : "var(--net)", stroke: r.net < 0 ? "var(--net)" : "var(--surface)", "stroke-width": r.net < 0 ? 2 : 1.5 }, svg);
+    });
+
+    // Banksaldo: paarse stippellijn
+    var bp = [];
+    rs.forEach(function (r, i) { if (r.bank !== null) bp.push((bp.length ? "L" : "M") + cx(i) + " " + yb(r.bank)); });
+    if (bp.length) {
+      el("path", { d: bp.join(" "), fill: "none", stroke: "var(--bank)", "stroke-width": 2, "stroke-dasharray": "6 4", "stroke-linejoin": "round" }, svg);
+      rs.forEach(function (r, i) {
+        if (r.bank !== null) el("circle", { cx: cx(i), cy: yb(r.bank), r: small ? 2.5 : 3, fill: "var(--bank)" }, svg);
+      });
+    }
+
+    // Interactie-banden
+    rs.forEach(function (r, i) {
+      var band = el("rect", { x: m.l + bw * i, y: m.t, width: bw, height: ih, "class": "band", tabindex: 0,
+        "aria-label": cap(monLong.format(toDate(r.maand))) + ": netto over " + eur.format(r.net) }, svg);
+      function show() { showTip(r, cx(i), W); }
+      band.addEventListener("mouseenter", show);
+      band.addEventListener("focus", show);
+      band.addEventListener("click", show);
+      band.addEventListener("mouseleave", hideTip);
+      band.addEventListener("blur", hideTip);
+    });
+  }
+
+  function breakdownHtml(r) {
+    var h = "<strong>" + cap(monLong.format(toDate(r.maand))) + "</strong><table>" +
+      "<tr><td>Verkoop excl. btw</td><td>" + eur.format(r.se) + "</td></tr>";
+    r.parts.forEach(function (p) {
+      if (p[1] !== 0) h += '<tr><td class="minus">− ' + p[0] + "</td><td>" + eur.format(p[1]) + "</td></tr>";
+    });
+    h += '<tr class="sum"><td>Uitgaven excl. btw</td><td>' + eur.format(r.ue) + "</td></tr>" +
+      '<tr class="sum"><td>Netto over</td><td>' + eur.format(r.net) + "</td></tr>" +
+      "<tr><td>Btw verkoop / uitgaven</td><td>" + eur.format(r.sv) + " / " + eur.format(r.uv) + "</td></tr>" +
+      (r.bank === null ? "" : "<tr><td>Banksaldo einde maand</td><td>" + eur.format(r.bank) + "</td></tr>") + "</table>";
+    var neg = r.parts[5][1] < 0;
+    if (neg) h += '<span class="hint">Negatieve overige betalingen: facturen deze maand geboekt maar pas later betaald.</span>';
+    return h;
+  }
+  function showTip(r, x, W) {
+    tip.innerHTML = breakdownHtml(r);
+    tip.classList.add("on");
+    var scale = wrap.clientWidth / W, tw = tip.offsetWidth;
+    var left = x * scale + 14;
+    if (left + tw > wrap.clientWidth) left = x * scale - tw - 14;
+    tip.style.left = Math.max(0, left) + "px";
+    tip.style.top = "8px";
+  }
+  function hideTip() { tip.classList.remove("on"); }
+
+  var rowTip = document.getElementById("row-tip");
+  var byMonth = {}; rows.forEach(function (r) { byMonth[r.maand] = r; });
+  function showRowTip(tr, evt) {
+    var r = byMonth[tr.getAttribute("data-m")]; if (!r) return;
+    rowTip.innerHTML = breakdownHtml(r);
+    rowTip.classList.add("on");
+    var rect = tr.getBoundingClientRect(), tw = rowTip.offsetWidth, th = rowTip.offsetHeight;
+    var x = evt && evt.clientX ? evt.clientX + 16 : rect.left + 24;
+    if (x + tw > window.innerWidth - 12) x = Math.max(12, (evt && evt.clientX ? evt.clientX : rect.right) - tw - 16);
+    var y = rect.bottom + 6;
+    if (y + th > window.innerHeight - 12) y = Math.max(12, rect.top - th - 6);
+    rowTip.style.left = x + "px"; rowTip.style.top = y + "px";
+  }
+  function hideRowTip() { rowTip.classList.remove("on"); }
+  tb.addEventListener("mouseover", function (e) { var tr = e.target.closest("tr"); if (tr) showRowTip(tr, e); });
+  tb.addEventListener("mousemove", function (e) { var tr = e.target.closest("tr"); if (tr) showRowTip(tr, e); });
+  tb.addEventListener("mouseleave", hideRowTip);
+  tb.addEventListener("focusin", function (e) { var tr = e.target.closest("tr"); if (tr) showRowTip(tr); });
+  tb.addEventListener("focusout", hideRowTip);
+  tb.addEventListener("click", function (e) { var tr = e.target.closest("tr"); if (tr) showRowTip(tr, e); });
+  window.addEventListener("scroll", hideRowTip, { passive: true });
+
+  resetRange();
+  var rt;
+  window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(draw, 120); });
+})();
+</script>
+</body>
+</html>

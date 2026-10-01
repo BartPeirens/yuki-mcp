@@ -66,6 +66,66 @@ tool-aanroep terecht.
 Er is geen aparte sessie- of inlogstap nodig: de server authenticeert zelf bij Yuki met de
 opgegeven API-key en ververst de sessie automatisch.
 
+## Skill: wekelijks Yuki-dashboard
+
+In [skills/yuki-dashboard/](skills/yuki-dashboard/) zit een generieke Claude-skill die op basis van
+deze MCP-server altijd hetzelfde financiële dashboard maakt (verkoop, uitgaven, btw, netto over per
+maand en per jaar, banksaldo) en als artifact publiceert. Je kan er ook een wekelijkse geplande
+taak van maken, zodat het dashboard zichzelf ververst.
+
+> **Belangrijk:** de MCP-server draait lokaal op je pc. Claude Desktop heeft dus je pc nodig
+> om de Yuki-tools te gebruiken, en een geplande taak draait enkel als die pc aan staat en wakker
+> is.
+
+### 1. De skill toevoegen in Claude Desktop
+
+1. Maak een zip van de skill-map, zodat `yuki-dashboard/SKILL.md` in de zip staat:
+
+   ```powershell
+   Compress-Archive -Path skills\yuki-dashboard -DestinationPath yuki-dashboard.zip
+   ```
+
+2. Open in Claude Desktop **Settings → Capabilities** (of **Customize → Skills**) en zorg dat
+   *code execution / file creation* aan staat (de skill draait een Python-script).
+3. Kies bij **Skills** voor **Upload skill** en selecteer `yuki-dashboard.zip`.
+4. Zet de skill aan. Test met een nieuwe chat, bv.: *"Maak het Yuki-dashboard voor administratie
+   `<naam van je administratie>`"*.
+
+### 2. Een artifact-url krijgen
+
+De skill publiceert het dashboard als artifact en wil bij elke update **dezelfde link**
+hergebruiken. Die link maak je zo:
+
+1. Laat de skill het dashboard één keer uitvoeren (zie de testchat hierboven). Omdat er nog geen
+   link is, publiceert Claude een nieuw artifact.
+2. Open het artifact in Claude en kopieer de url uit de adresbalk of via het deel-/kopieer-menu
+   van het artifact. Ze ziet eruit als `https://claude.ai/artifact/<id>`.
+3. Bewaar die link: die gebruik je in de geplande taak, zodat elke update dezelfde pagina
+   vernieuwt in plaats van telkens een nieuw artifact te maken.
+
+### 3. De wekelijkse taak plannen
+
+1. Open in Claude Desktop **Scheduled tasks** (zijbalk) en kies **New task**. Je kan Claude de
+   taak ook laten aanmaken door in een chat gewoon te typen dat je het dashboard elke week wilt
+   bijwerken.
+2. Vul in:
+   - **Name**: bv. `Weekly Yuki Dashboard update`
+   - **Instructions**:
+
+     ```
+     Voer de skill yuki-dashboard uit voor administratie "<naam van je administratie>" en
+     publiceer naar <jouw artifact-url>.
+     ```
+
+   - **Frequency**: `Weekly`, een dag en uur naar keuze (bv. maandag 10:00)
+   - **Permissions**: `Automatically approve`, zodat de taak de Yuki-tools kan gebruiken zonder
+     telkens om toestemming te vragen. Het dashboard leest enkel gegevens uit Yuki.
+   - **Require this computer**: **aan**. De lokale Yuki-MCP draait enkel op je pc, dus de taak kan
+     alleen lopen terwijl die pc aanstaat en wakker is.
+3. Klik **Save**.
+
+Kies het uur op een moment waarop je pc normaal aanstaat, anders loopt de update niet.
+
 ## Zelf bouwen
 
 Vereist: [.NET SDK 10](https://dotnet.microsoft.com/download) of nieuwer.
