@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A C#/.NET 10 MCP server (stdio transport) that wraps Yuki's accounting SOAP webservices as MCP
-tools for Claude Desktop. See `plan.md` for the full architecture write-up, the endpoint-to-tool
-mapping, and the current roadmap/open questions — read it before making structural changes.
+tools for Claude Desktop. The architecture is described below; `README.md` covers installation
+and usage (in Dutch).
 
 ## Commands
 
@@ -51,8 +51,7 @@ dotnet-svcutil "https://api.yukiworks.be/ws/<Service>.asmx?WSDL" \
 Generated output lives in `src/YukiMcp/Yuki/<Service>/<Service>Client.cs` plus a
 `dotnet-svcutil.params.json` per service (used by `dotnet-svcutil -u` to refresh a service later).
 **The live WSDL is the source of truth, not the Postman docs** — it exposes several undocumented
-operations and is missing at least one documented one (see "Onder de motorkap" / "Open vragen" in
-`plan.md`). When adding or touching a service's tools, regenerate from the WSDL rather than trusting
+operations and is missing at least one documented one. When adding or touching a service's tools, regenerate from the WSDL rather than trusting
 the Postman collection's parameter list.
 
 Each generated `<Service>SoapClient` has two API surfaces: an interface-level one (sometimes a
@@ -86,8 +85,8 @@ Key pieces, all under `src/YukiMcp/`:
   service — exposed once as `yuki_general_*` instead of 13 times. The three `Authenticate*`
   operations are session-manager-internal only and are never exposed as tools.
 - `Resources/HelpResource.cs` — the `help://yuki-mcp` resource.
-- `Prompts/`, `Apps/` — empty on purpose; scaffolding notes for future work (see `plan.md` Fase
-  4/5). Don't add prompt/app code without also wiring the corresponding `.With*FromAssembly()` call
+- `Prompts/`, `Apps/` — empty on purpose; scaffolding notes for future work (see the `README.md` in each
+  folder). Don't add prompt/app code without also wiring the corresponding `.With*FromAssembly()` call
   in `Program.cs`.
 
 ### Regenerating or extending the tool files
@@ -106,5 +105,5 @@ format with `YukiResult.Format(...)`, and set the MCP annotations (`ReadOnly`/`D
 `YukiMcp.csproj` sets `SelfContained` + `PublishSingleFile` so `dotnet publish` produces one
 self-contained exe (no separate .NET runtime install needed by the recipient). `RuntimeIdentifiers`
 lists win-x64/osx-x64/osx-arm64/linux-x64, but only win-x64 has actually been run. This is
-intentionally *not* packaged as an installer (MSI/Inno Setup) — see `plan.md` Fase 6 for why, and
-when that might change.
+intentionally *not* packaged as an installer (MSI/Inno Setup) — a zip with the exe, README and
+`.env` template is enough for the target audience.

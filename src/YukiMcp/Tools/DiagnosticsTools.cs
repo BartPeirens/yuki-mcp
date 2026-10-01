@@ -28,7 +28,7 @@ public static class DiagnosticsTools
             Version:        {version}
             Yuki base URL:  {options.BaseUrl}
             API key:        configured ({maskedKey})
-            Endpoint tools: see the help://yuki-mcp resource, or plan.md, for the full list.
+            Endpoint tools: see the help://yuki-mcp resource, for the full list.
             """;
     }
 }

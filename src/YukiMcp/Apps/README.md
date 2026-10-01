@@ -15,4 +15,3 @@ When the SDK exposes a stable API for this:
 2. Add app-backed responses here, one file per feature area, following the same per-service
    grouping used in `Tools/`.
 
-See `plan.md`, Fase 5, for context on why this is deferred.

@@ -58,10 +58,10 @@ tool-aanroep terecht.
   domein-/administratie-opzoekingen (welke administraties/domeinen heb ik toegang toe, ...).
   Sommige tools **wijzigen data** in Yuki (documenten uploaden, journaalposten boeken, contacten
   bijwerken, ...) — behandel die met dezelfde voorzichtigheid als een rechtstreekse Yuki-API-call.
-  Zie `plan.md` in de broncode voor de volledige lijst per Yuki-webservice.
+  De volledige lijst zie je in de toollijst van je MCP-client (of in MCP Inspector, zie onder).
 - **Resource**: `help://yuki-mcp` geeft een korte uitleg over authenticatie en de toolindeling —
   vraag je assistent gerust om die op te vragen als je twijfelt hoe iets werkt.
-- **Prompts / apps**: nog niet geïmplementeerd; de basis staat klaar voor later (zie `plan.md`).
+- **Prompts / apps**: nog niet geïmplementeerd; de basis staat klaar voor later.
 
 Er is geen aparte sessie- of inlogstap nodig: de server authenticeert zelf bij Yuki met de
 opgegeven API-key en ververst de sessie automatisch.
@@ -185,8 +185,27 @@ ontwikkeling of om een build te controleren voor je hem aan Claude Desktop koppe
 
 Dit project is een werkende eerste versie: de server, alle 13 Yuki-webservices en 96 tools zijn
 opgezet en end-to-end getest (opstarten, tools/resources oplijsten, een tool aanroepen) — maar nog
-**niet functioneel getest tegen een echte Yuki-administratie**. Zie `plan.md` voor de volledige
-architectuur, de roadmap en gekende aandachtspunten (met name rond de tools die data wijzigen).
+**niet grondig functioneel getest tegen een echte Yuki-administratie**. Let vooral op bij de tools
+die data wijzigen (documenten uploaden, journaalposten boeken, contacten bijwerken, ...).
+
+## Gebruik op eigen risico
+
+Deze software wordt aangeboden **"as is"**, zonder enige garantie, en **het gebruik ervan is
+volledig op eigen risico**. Concreet:
+
+- De server geeft een AI-assistent rechtstreeks toegang tot je Yuki-administratie. Een assistent
+  kan fouten maken, een opdracht verkeerd interpreteren of onbedoeld data aanmaken, wijzigen of
+  boeken. Controleer wat hij doet, zeker bij tools die data wijzigen, en laat dit bij twijfel niet
+  automatisch goedkeuren.
+- Er is geen aparte testomgeving: elke aanroep gaat naar je echte Yuki-administratie. Test eerst
+  met een testadministratie en maak een back-up of controleer je boekhouding vóór je schrijvende
+  tools gebruikt.
+- Je API-key geeft toegang tot je boekhouding. Bewaar het `.env`-bestand veilig en deel het niet.
+  Gegevens die de assistent opvraagt, worden verwerkt door de gebruikte AI-dienst (bv. Claude).
+- Dit is geen officieel Yuki-product en is niet door Yuki goedgekeurd of ondersteund.
+- De auteur is niet aansprakelijk voor schade, dataverlies, foute boekingen of fiscale/boekhoudkundige
+  gevolgen die voortvloeien uit het gebruik van deze software. Jij blijft verantwoordelijk voor de
+  juistheid van je boekhouding.
 
 ## Licentie
 

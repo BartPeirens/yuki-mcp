@@ -11,4 +11,3 @@ No prompts exist yet. When the first one is added:
 2. Register the assembly scan in `Program.cs` by adding `.WithPromptsFromAssembly()` to the
    `AddMcpServer()` builder chain.
 
-See `plan.md`, Fase 4, for context on why this is deferred.

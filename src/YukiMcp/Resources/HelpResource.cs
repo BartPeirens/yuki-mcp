@@ -34,12 +34,12 @@ public static class HelpResource
         FiscalTable, Integration, Pettycash, Sales, Vat), plus a small `yuki_general_*` group for
         the handful of operations (Administrations, Domains, Companies, ...) that exist identically
         on every service. `yuki_server_status` reports the server's own version/config, not Yuki
-        data. See `plan.md` in the repository for the full endpoint-by-tool mapping and known
-        limitations (e.g. undocumented WSDL operations, one unsupported filter parameter).
+        data. Use the tool list of your MCP client for the full overview.
 
-        Tools marked as writes in `plan.md` create or change data in Yuki (uploading documents,
-        posting journals, updating contacts, ...) - treat those with the same care you would a
-        direct Yuki API call, since Yuki has no separate sandbox for this server to target.
+        Tools that are not annotated read-only create or change data in Yuki (uploading
+        documents, posting journals, updating contacts, ...) - treat those with the same care
+        you would a direct Yuki API call, since Yuki has no separate sandbox for this server to
+        target.
 
         ## Adding this server to Claude Desktop
 

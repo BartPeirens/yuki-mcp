@@ -6,8 +6,7 @@
     Produces the artifact that gets handed to end users: one .exe (plus a .pdb) with the
     .NET runtime baked in, so nothing needs to be installed on the target machine beyond the
     file itself. Output goes to ../build (flat - not per-runtime), since that's what
-    scripts/package-zip.ps1 and .vscode/tasks.json expect. See ../plan.md
-    ("Distributie & installatie") and ../README.md.
+    scripts/package-zip.ps1 and .vscode/tasks.json expect. See ../README.md.
 
 .PARAMETER Runtime
     A .NET runtime identifier. Defaults to win-x64, since Claude Desktop's primary target here

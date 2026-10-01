@@ -10,7 +10,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <!--
       Distribution: this server is shipped to end users as a single .exe that Claude Desktop
-      launches directly (see README.md / plan.md). These settings make `dotnet publish` produce
+      launches directly (see README.md). These settings make `dotnet publish` produce
       one self-contained, single-file executable per platform without extra flags.
       `scripts/publish.ps1` picks the runtime identifier per target at publish time; the
       RuntimeIdentifiers list below just declares which platforms are supported.

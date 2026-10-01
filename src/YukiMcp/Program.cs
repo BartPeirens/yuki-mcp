@@ -14,7 +14,7 @@ builder.Logging.AddConsole(options =>
     options.LogToStandardErrorThreshold = LogLevel.Trace;
 });
 
-// The Yuki API access key is passed as a startup argument (see README.md / plan.md) so the
+// The Yuki API access key is passed as a startup argument (see README.md) so the
 // exe can be dropped straight into a Claude Desktop "command"/"args" config with no extra
 // setup step (no .env file, no OS-level secret store).
 var yukiOptions = YukiServerOptions.Parse(args);
@@ -29,8 +29,8 @@ builder.Services
     .WithToolsFromAssembly()
     .WithResourcesFromAssembly();
 
-// Prompts and MCP "apps" (richer, UI-carrying responses) are on the roadmap - see plan.md,
-// Fase 4 and Fase 5 - but have no real content yet. Once the first one ships, register it here:
+// Prompts and MCP "apps" (richer, UI-carrying responses) are planned
+// but have no real content yet. Once the first one ships, register it here:
 //   .WithPromptsFromAssembly()
 
 await builder.Build().RunAsync();

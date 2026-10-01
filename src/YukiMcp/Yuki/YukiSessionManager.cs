@@ -10,8 +10,7 @@ namespace YukiMcp.Yuki;
 /// and re-authenticates when it expires. Every tool asks this class to run its call instead of
 /// taking a session id as a tool parameter.
 ///
-/// Authenticate lives identically on every generated service client (see plan.md, "Sessie- en
-/// authenticatiebeheer"); the Sales one is used here only because that's the client the public
+/// Authenticate lives identically on every generated service client; the Sales one is used here only because that's the client the public
 /// Postman collection's GENERAL examples happen to use - it has no other significance.
 /// </summary>
 public sealed class YukiSessionManager

@@ -7,7 +7,7 @@
     CHANGELOG.md and a ".env" template (APIKEY=Replace with apikey) into a single zip under dist/.
     That zip is the thing you send: the recipient unzips it, fills in their real key in .env, and
     points Claude Desktop's config at the exe inside - no API key ever goes in the Claude Desktop
-    config itself. See ../plan.md ("Distributie & installatie").
+    config itself.
 
     Versioning is a plain incrementing counter (v1, v2, ...), not SemVer - it tracks the
     distributed zip, not the Yuki tools' functionality. The next version number is read from
